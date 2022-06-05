@@ -3,18 +3,29 @@ package ot.homework5plus.rushm.service;
 import ot.homework5plus.rushm.domain.Book;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BookService {
 
-    List<Book> getAll();
+    Book findById(long id);
 
-    Book getById(long id);
+    Book save(Book book);
 
-    Book getNewBook();
+    List<Book> findAll();
 
-    int getCount();
+    List<Book> findByName(String name);
 
-    void insert(Book book);
+    List<Book> findAllBooksByAuthorId(long id);
+
+    List<Book> findAllWithComments();
+
+    Map<Book, Long> findAllBooksWithCommentsCount();
+
+    void updateNameById(long id, String name);
+
+    void addNewBook();
+
+    long getCount();
 
     void deleteById(long id);
 }

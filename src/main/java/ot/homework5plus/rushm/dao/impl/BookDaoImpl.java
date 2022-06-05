@@ -1,84 +1,84 @@
 package ot.homework5plus.rushm.dao.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Repository;
 import ot.homework5plus.rushm.dao.BookDao;
-import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
-import ot.homework5plus.rushm.domain.Genre;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
+import javax.persistence.*;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class BookDaoImpl implements BookDao {
-    private static final int INITIAL_CAPACITY = 1;
-    private final NamedParameterJdbcOperations jdbcOperations;
 
-    @Autowired
-    public BookDaoImpl(NamedParameterJdbcOperations jdbcOperations) {
-        this.jdbcOperations = jdbcOperations;
+    @PersistenceContext
+    private EntityManager em;
+
+    @Override
+    public Book save(Book book) {
+        return em.merge(book);
     }
 
     @Override
-    public int getCount() {
-        return jdbcOperations.queryForObject("select count(*) from book", new HashMap<>(INITIAL_CAPACITY), Integer.class);
+    public Optional<Book> findById(long id) {
+        return Optional.ofNullable(em.find(Book.class, id));
     }
 
     @Override
-    public long insert(Book book) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("title", book.getTitle());
-        params.addValue("genreId", book.getGenre().getId());
-        params.addValue("authorId", book.getAuthor().getId());
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcOperations.update("insert into book (title, genreid, authorId) values(:title,:genreId,:authorId)", params, keyHolder);
-        return keyHolder.getKey().longValue();
+    public List<Book> findAll() {
+        EntityGraph<?> entityGraph = em.getEntityGraph("author_genre_entity_graph");
+        TypedQuery<Book> query = em.createQuery("select b from Book b", Book.class);
+        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        return query.getResultList();
     }
 
     @Override
-    public Book getById(long id) {
-        final Map<String, Object> params = new HashMap<>(INITIAL_CAPACITY);
-        params.put("id", id);
-        return jdbcOperations.queryForObject("select b.id, b.title, b.genreId, b.authorId, a.name authorName, g.name genreName " +
-                        "from (book b left join author a on b.authorId = a.id) " +
-                        "left join genre g on b.genreId = g.id " +
-                        "where b.id = :id", params, new BookMapper());
+    public List<Book> findByName(String title) {
+        EntityGraph<?> entityGraph = em.getEntityGraph("author_genre_entity_graph");
+        TypedQuery<Book> query = em.createQuery("select b from Book b where b.title = :title", Book.class);
+        query.setParameter("title", title);
+        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        return query.getResultList();
     }
 
     @Override
-    public List<Book> getAll() {
-        return jdbcOperations.query("select b.id, b.title, b.genreId, b.authorId, a.name authorName, g.name genreName " +
-                        "from (book b left join author a on b.authorId = a.id) " +
-                        "left join genre g on b.genreId = g.id", new BookMapper());
+    public void updateNameById(long id, String name) {
+        Query query = em.createQuery("update Book b set b.title = :name where b.id = :id");
+        query.setParameter("id", id);
+        query.setParameter("name", name);
+        query.executeUpdate();
     }
 
+    @Override
     public void deleteById(long id) {
-        final Map<String, Object> params = new HashMap<>(INITIAL_CAPACITY);
-        params.put("id", id);
-        jdbcOperations.update("delete from book where id=:id", params);
+        Query query = em.createQuery("delete from Book b where b.id = :id");
+        query.setParameter("id", id);
+        query.executeUpdate();
     }
 
-    private static class BookMapper implements RowMapper<Book> {
-
-        @Override
-        public Book mapRow(ResultSet resultSet, int i) throws SQLException {
-            long id = resultSet.getLong("id");
-            String title = resultSet.getString("title");
-            Book book = new Book(id, title);
-            book.setAuthor(new Author(resultSet.getLong("authorId"), resultSet.getString("authorName")));
-            book.setGenre(new Genre(resultSet.getLong("genreId"), resultSet.getString("genreName")));
-            return book;
-        }
+    @Override
+    public long getCount() {
+        return em.createQuery("select count(b) from Book b", Long.class).getSingleResult();
     }
 
+    @Override
+    public List<Book> findAllBooksByAuthorId(long id) {
+        EntityGraph<?> entityGraph = em.getEntityGraph("author_genre_entity_graph");
+        TypedQuery<Book> query = em.createQuery("select b from Book b where b.author.id=:id", Book.class);
+        query.setParameter("id", id);
+        query.setHint("javax.persistence.fetchgraph", entityGraph);
+        return query.getResultList();
+    }
 
+    @Override
+    public List<Book> findAllWithComments() {
+        return null;
+    }
+
+    @Override
+    public List<ImmutablePair<Book, Long>> findAllBooksWithCommentsCount() {
+        Query query = em.createQuery("select new org.apache.commons.lang3.tuple.ImmutablePair (c.book, count(c)) from Comment c group by c.book");
+        return query.getResultList();
+    }
 }

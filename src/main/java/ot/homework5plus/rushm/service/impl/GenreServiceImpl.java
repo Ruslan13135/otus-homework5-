@@ -1,9 +1,12 @@
 package ot.homework5plus.rushm.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ot.homework5plus.rushm.dao.GenreDao;
 import ot.homework5plus.rushm.domain.Genre;
 import ot.homework5plus.rushm.service.GenreService;
+
+import java.util.Optional;
 
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -14,15 +17,18 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre getById(long id) {
-        return genreDao.getById(id);
+    @Transactional
+    public Genre save(Genre genre) {
+        return genreDao.save(genre);
     }
 
     @Override
-    public Genre getGenre(String genreName) {
-        if (!genreDao.checkByName(genreName)) {
-            genreDao.insert(new Genre(genreName));
-        }
-        return genreDao.getByName(genreName);
+    public Optional<Genre> findById(long id) {
+        return genreDao.findById(id);
+    }
+
+    @Override
+    public Genre findByName(String name) {
+        return genreDao.findByName(name);
     }
 }

@@ -2,13 +2,16 @@ package ot.homework5plus.rushm.dao;
 
 import ot.homework5plus.rushm.domain.Author;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface AuthorDao {
 
-    Author getById(long id);
+    Author save (Author author);
 
-    Author getByName(String genreName);
+    Optional<Author> findById(long id);
 
-    boolean checkByName(String genreName);
+    List<Author> findAll();
 
-    void insert(Author genre);
+    Author findByName(String name);
 }

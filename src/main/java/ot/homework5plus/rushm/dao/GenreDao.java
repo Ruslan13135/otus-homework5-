@@ -3,14 +3,14 @@ package ot.homework5plus.rushm.dao;
 import org.springframework.stereotype.Repository;
 import ot.homework5plus.rushm.domain.Genre;
 
+import java.util.Optional;
+
 @Repository
 public interface GenreDao {
 
-    Genre getById(long id);
+    Genre save(Genre genre);
 
-    Genre getByName(String genreName);
+    Optional<Genre> findById(long id);
 
-    boolean checkByName(String genreName);
-
-    void insert(Genre genre);
+    Genre findByName(String name);
 }

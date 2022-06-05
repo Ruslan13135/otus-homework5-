@@ -1,18 +1,30 @@
 package ot.homework5plus.rushm.dao;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import ot.homework5plus.rushm.domain.Book;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookDao {
 
-    List<Book> getAll();
+    Book save (Book book);
 
-    Book getById(long id);
+    Optional<Book> findById(long id);
 
-    int getCount();
+    List<Book> findAll();
 
-    long insert(Book book);
+    List<Book> findByName(String name);
+
+    void updateNameById(long id, String name);
 
     void deleteById(long id);
+
+    long getCount();
+
+    List<Book> findAllBooksByAuthorId(long id);
+
+    List<Book> findAllWithComments();
+
+    List<ImmutablePair<Book,Long>> findAllBooksWithCommentsCount();
 }
