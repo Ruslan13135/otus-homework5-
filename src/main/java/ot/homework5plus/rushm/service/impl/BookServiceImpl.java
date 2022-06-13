@@ -4,7 +4,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ot.homework5plus.rushm.dao.BookDao;
+import ot.homework5plus.rushm.repository.BookRepository;
 import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Genre;
@@ -20,69 +20,57 @@ import java.util.Map;
 @Service
 public class BookServiceImpl implements BookService {
     final private IOService ioService;
-    final private BookDao bookDao;
+    final private BookRepository bookRepository;
     final private GenreService genreService;
     final private AuthorService authorService;
 
     @Autowired
-    public BookServiceImpl(IOService ioService, BookDao bookDao, GenreService genreService, AuthorService authorService) {
+    public BookServiceImpl(IOService ioService, BookRepository bookRepository, GenreService genreService, AuthorService authorService) {
         this.ioService = ioService;
-        this.bookDao = bookDao;
+        this.bookRepository = bookRepository;
         this.genreService = genreService;
         this.authorService = authorService;
     }
 
-    @Override
     @Transactional
     public Book save(Book book) {
-        return bookDao.save(book);
+        return bookRepository.save(book);
     }
 
-    @Override
     public Book findById(long id) {
-        return bookDao.findById(id).get();
+        return bookRepository.findById(id).get();
     }
 
-    @Override
     public List<Book> findAll() {
-        return bookDao.findAll();
+        return bookRepository.findAll();
     }
 
-    @Override
     public List<Book> findByName(String name) {
-        return bookDao.findByName(name);
+        return bookRepository.findBooksByTitle(name);
     }
 
-    @Override
     @Transactional
     public void updateNameById(long id, String name) {
-        bookDao.updateNameById(id, name);
+        Book book = bookRepository.findById(id).get();
+        book.setTitle(name);
+        bookRepository.save(book);
     }
 
-    @Override
     @Transactional
     public void deleteById(long id) {
-        bookDao.deleteById(id);
+        bookRepository.deleteById(id);
     }
 
-    @Override
-    public long getCount() {
-        return bookDao.getCount();
+    public long count() {
+        return bookRepository.count();
     }
 
-    @Override
     public List<Book> findAllBooksByAuthorId(long id) {
-        return bookDao.findAllBooksByAuthorId(id);
+        return bookRepository.findAllBooksByAuthorId(id);
     }
 
-    @Override
-    public List<Book> findAllWithComments() {
-        return bookDao.findAllWithComments();
-    }
-
-    @Override
     public Map<Book, Long> findAllBooksWithCommentsCount() {
-        List<ImmutablePair<Book, Long>> pairList= bookDao.findAllBooksWithCommentsCount();
+        List<ImmutablePair<Book, Long>> pairList= bookRepository.findAllBooksWithCommentsCount();
         Map<Book, Long> bookMap = new HashMap<>();
         for (ImmutablePair pair: pairList) {
             bookMap.put((Book) pair.left, (long) pair.right);
@@ -90,7 +78,6 @@ public class BookServiceImpl implements BookService {
         return bookMap;
     }
 
-    @Override
     @Transactional
     public void addNewBook() {
         ioService.write("Пожалуйста, введите название книги");
@@ -104,6 +91,6 @@ public class BookServiceImpl implements BookService {
         Genre genre = genreService.findByName(genreName);
         if (genre == null) genre = new Genre(genreName);
         Book book = new Book(title, author, genre);
-        bookDao.save(book);
+        bookRepository.save(book);
     }
 }

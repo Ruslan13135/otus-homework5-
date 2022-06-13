@@ -17,15 +17,13 @@ public interface BookService {
 
     List<Book> findAllBooksByAuthorId(long id);
 
-    List<Book> findAllWithComments();
-
     Map<Book, Long> findAllBooksWithCommentsCount();
 
     void updateNameById(long id, String name);
 
     void addNewBook();
 
-    long getCount();
+    long count();
 
     void deleteById(long id);
 }

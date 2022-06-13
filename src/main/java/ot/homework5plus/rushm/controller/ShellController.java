@@ -54,12 +54,14 @@ public class ShellController {
 
     @ShellMethod(value = "count all books", key = {"count-all", "ca"})
     public void bookCount() {
-        ioService.write(bookService.getCount());
+        ioService.write(bookService.count());
     }
 
     @ShellMethod(value = "update book name using id", key = {"bookUpdateNameById", "bunbid"})
     public void updateBookNameById(@ShellOption("--id") Long id, @ShellOption("--name") String name) {
-        bookService.updateNameById(id, name);
+        Book book = bookService.findById(id);
+        book.setTitle(name);
+        bookService.save(book);
     }
 
     @ShellMethod(value = "find book using name", key = {"bookFindByName", "bfbn"})

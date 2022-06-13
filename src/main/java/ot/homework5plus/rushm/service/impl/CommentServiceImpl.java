@@ -3,10 +3,9 @@ package ot.homework5plus.rushm.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ot.homework5plus.rushm.dao.CommentDao;
+import ot.homework5plus.rushm.repository.CommentRepository;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Comment;
-import ot.homework5plus.rushm.service.BookService;
 import ot.homework5plus.rushm.service.CommentService;
 import ot.homework5plus.rushm.service.IOService;
 
@@ -14,13 +13,13 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-    final private CommentDao commentDao;
+    final private CommentRepository commentRepository;
     final private IOService ioService;
-    final private BookService bookService;
+    final private BookServiceImpl bookService;
 
     @Autowired
-    public CommentServiceImpl(CommentDao commentDao, IOService ioService, BookService bookService) {
-        this.commentDao = commentDao;
+    public CommentServiceImpl(CommentRepository commentRepository, IOService ioService, BookServiceImpl bookService) {
+        this.commentRepository = commentRepository;
         this.ioService = ioService;
         this.bookService = bookService;
     }
@@ -28,24 +27,24 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Comment save(Comment comment) {
-        return commentDao.save(comment);
+        return commentRepository.save(comment);
     }
 
     @Override
     public List<Comment> findByBookId(long id) {
-        return commentDao.findByBookId(id);
+        return commentRepository.findByBookId(id);
     }
 
     @Override
     @Transactional
     public void updateTextById(long id, String text) {
-        commentDao.updateTextById(id, text);
+        commentRepository.updateTextById(id, text);
     }
 
     @Override
     @Transactional
     public void deleteById(long id) {
-        commentDao.deleteById(id);
+        commentRepository.deleteById(id);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
             ioService.write("Введите комментарий для книги: " + book.getTitle());
             String commentText = ioService.read();
             Comment comment = new Comment(commentText, book);
-            commentDao.save(comment);
+            commentRepository.save(comment);
         } else {
             ioService.write("Книги по такому уникальному идентификатору не существует");
         }
@@ -66,12 +65,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> findAllCommentsByAuthorId(long id) {
-        return commentDao.findAllCommentsByAuthorId(id);
+        return commentRepository.findAllCommentsByAuthorId(id);
     }
 
     @Override
     @Transactional
     public void deleteByBookId(long id) {
-        commentDao.deleteByBookId(id);
+        commentRepository.deleteByBookId(id);
     }
 }

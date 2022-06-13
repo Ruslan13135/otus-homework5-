@@ -13,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name ="author")
-@NamedEntityGraph(name = "book_entity_graph",attributeNodes = {@NamedAttributeNode("books")})
+@NamedEntityGraph(name = "book_entity_graph", attributeNodes = { @NamedAttributeNode("books") })
 public class Author {
 
     @Id
@@ -26,12 +26,7 @@ public class Author {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     private List<Book> books;
 
-    public Author (Long id,String name){
-        this.id = id;
-        this.name = name;
-    }
-
-    public Author(String name) {
+    public Author(String name){
         this.name = name;
     }
 
