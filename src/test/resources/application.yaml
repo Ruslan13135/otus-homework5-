@@ -5,7 +5,7 @@ Spring:
     init:
       mode: always
       data-locations: testdata.sql
-      schema-locations: schema.sql
+      schema-locations: testschema.sql
   jpa:
     generate-ddl: false
     hibernate:

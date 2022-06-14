@@ -37,8 +37,8 @@ class CommentRepositoryTest {
 
     @Test
     void findAllCommentsByBookId() {
-        List<Comment> comments = commentRepository.findByBookId(SECOND_ID);
-        assertThat(comments).isNotNull().hasSize((int) SECOND_ID)
+        List<Comment> comments = commentRepository.findById(SECOND_ID);
+        assertThat(comments).isNotNull().hasSize((int) FIRST_ID)
                 .allMatch(comment -> !comment.getText().equals(""))
                 .allMatch(comment -> comment.getBook().getTitle() != null);
     }
@@ -55,7 +55,8 @@ class CommentRepositoryTest {
         Comment firstComment = em.find(Comment.class, SECOND_ID);
         String oldText = firstComment.getText();
         em.clear();
-        commentRepository.updateTextById(SECOND_ID, NEW_COMMENT_TEXT);
+        firstComment.setText(NEW_COMMENT_TEXT);
+        commentRepository.save(firstComment);
         Comment updateComment = em.find(Comment.class, SECOND_ID);
         assertThat(updateComment.getText()).isNotEqualTo(oldText).isEqualTo(NEW_COMMENT_TEXT);
     }

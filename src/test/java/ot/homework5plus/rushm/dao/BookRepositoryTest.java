@@ -86,7 +86,7 @@ class BookRepositoryTest {
     @Test
     void deleteBookNameById() {
         em.clear();
-        commentRepository.deleteByBookId(SECOND_ID);
+        commentRepository.deleteById(SECOND_ID);
         bookRepository.deleteById(SECOND_ID);
         Book deletedBook = em.find(Book.class, SECOND_ID);
         Assertions.assertThat(deletedBook).isNull();

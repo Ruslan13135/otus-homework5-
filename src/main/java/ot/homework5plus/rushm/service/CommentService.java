@@ -10,13 +10,10 @@ public interface CommentService {
 
     List<Comment> findByBookId(long id);
 
-    List<Comment> findAllCommentsByAuthorId(long id);
-
     void updateTextById(long id, String text);
 
     void deleteById(long id);
 
     void addNewComment();
 
-    void deleteByBookId(long id);
 }

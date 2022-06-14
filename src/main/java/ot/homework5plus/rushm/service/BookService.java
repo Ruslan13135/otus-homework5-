@@ -15,12 +15,6 @@ public interface BookService {
 
     List<Book> findByName(String name);
 
-    List<Book> findAllBooksByAuthorId(long id);
-
-    Map<Book, Long> findAllBooksWithCommentsCount();
-
-    void updateNameById(long id, String name);
-
     void addNewBook();
 
     long count();

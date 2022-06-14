@@ -25,20 +25,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional
     public Comment save(Comment comment) {
         return commentRepository.save(comment);
     }
 
     @Override
     public List<Comment> findByBookId(long id) {
-        return commentRepository.findByBookId(id);
+        return commentRepository.findById(id);
     }
 
     @Override
     @Transactional
     public void updateTextById(long id, String text) {
-        commentRepository.updateTextById(id, text);
+        List<Comment> commentById = commentRepository.findById(id);
+        commentById.forEach(comment -> comment.setText(text));
+        commentRepository.saveAll(commentById);
     }
 
     @Override
@@ -63,14 +64,8 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @Override
-    public List<Comment> findAllCommentsByAuthorId(long id) {
-        return commentRepository.findAllCommentsByAuthorId(id);
-    }
-
-    @Override
     @Transactional
     public void deleteByBookId(long id) {
-        commentRepository.deleteByBookId(id);
+        commentRepository.deleteById(id);
     }
 }

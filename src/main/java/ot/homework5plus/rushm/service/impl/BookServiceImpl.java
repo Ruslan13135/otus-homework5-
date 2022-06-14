@@ -1,6 +1,5 @@
 package ot.homework5plus.rushm.service.impl;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +12,7 @@ import ot.homework5plus.rushm.service.BookService;
 import ot.homework5plus.rushm.service.GenreService;
 import ot.homework5plus.rushm.service.IOService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -32,7 +29,6 @@ public class BookServiceImpl implements BookService {
         this.authorService = authorService;
     }
 
-    @Transactional
     public Book save(Book book) {
         return bookRepository.save(book);
     }
@@ -63,19 +59,6 @@ public class BookServiceImpl implements BookService {
 
     public long count() {
         return bookRepository.count();
-    }
-
-    public List<Book> findAllBooksByAuthorId(long id) {
-        return bookRepository.findAllBooksByAuthorId(id);
-    }
-
-    public Map<Book, Long> findAllBooksWithCommentsCount() {
-        List<ImmutablePair<Book, Long>> pairList= bookRepository.findAllBooksWithCommentsCount();
-        Map<Book, Long> bookMap = new HashMap<>();
-        for (ImmutablePair pair: pairList) {
-            bookMap.put((Book) pair.left, (long) pair.right);
-        }
-        return bookMap;
     }
 
     @Transactional

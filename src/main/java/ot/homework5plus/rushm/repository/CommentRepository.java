@@ -13,19 +13,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Comment save(Comment book);
-
-    @Query("select c from Comment c where c.book.id = :id")
-    List<Comment> findByBookId(long id);
-
-    @Modifying
-    @Query("update Comment c set c.text = :text where c.id = :id")
-    void updateTextById(@Param("id") Long id, @Param("text") String text);
-
-    @Query("select c from Comment c left join c.book b where b.author.id = :id")
-    List<Comment> findAllCommentsByAuthorId(long id);
-
-    @Modifying
-    @Query("delete from Comment c where c.book.id = :id")
-    void deleteByBookId(long id);
+    List<Comment> findById(long id);
 }

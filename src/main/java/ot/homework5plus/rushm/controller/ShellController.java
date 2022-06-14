@@ -98,26 +98,17 @@ public class ShellController {
         authors.forEach(author -> ioService.write(author.toString()));
     }
 
-    @ShellMethod(value = "show all books using author id", key = {"bookListByAuthorId", "blai"})
-    public void showAllBooksByAuthorId(@ShellOption("--id") Long id) {
-        List<Book> books = bookService.findAllBooksByAuthorId(id);
-        ioService.write("Книги автора: " + authorService.findById(id).getName());
-        books.forEach(book -> ioService.write(book.getTitle()));
+    @ShellMethod(value = "show book using author id", key = {"bookByAuthorId", "bbai"})
+    public void showBookByAuthorId(@ShellOption("--id") Long id) {
+        Book books = bookService.findById(id);
+        ioService.write("Автор книги: " + authorService.findById(id).getName());
+        ioService.write(books.getAuthor().getName());
     }
 
     @ShellMethod(value = "show all comments to all books using author id", key = {"commentListByAuthorId", "clbai"})
     public void showAllCommentsByAuthorId(@ShellOption("--id") Long id) {
-        List<Comment> comments = commentService.findAllCommentsByAuthorId(id);
+        List<Comment> comments = commentService.findByBookId(id);
         ioService.write("Комментарии к книгам автора: " + authorService.findById(id).getName());
         comments.forEach(comment -> ioService.write("Книга: " + comment.getBook().getTitle() + ". Комментарий: " + comment.getText()));
-    }
-
-    @ShellMethod(value = "show all books and comments counts", key = {"bookListWithCommentsCountGroupBy", "blwc"})
-    public void showAllBooksWithComments() {
-        Map<Book, Long> books = bookService.findAllBooksWithCommentsCount();
-        for(Map.Entry<Book, Long> entry: books.entrySet()){
-            ioService.write(entry.getKey().toString());
-            ioService.write("Количество комментариев: " + entry.getValue());
-        }
     }
 }
