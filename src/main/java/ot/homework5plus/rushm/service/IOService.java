@@ -8,5 +8,5 @@ public interface IOService {
 
     Integer readInt();
 
-    void write(int count);
+    void write(long count);
 }

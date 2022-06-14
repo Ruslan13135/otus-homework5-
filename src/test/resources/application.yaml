@@ -4,3 +4,10 @@ Spring:
   sql:
     init:
       mode: always
+      data-locations: testdata.sql
+      schema-locations: testschema.sql
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
