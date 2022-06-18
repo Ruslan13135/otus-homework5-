@@ -1,11 +1,14 @@
 package ot.homework5plus.rushm.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import ot.homework5plus.rushm.domain.Genre;
 
-@Repository
-public interface GenreRepository extends JpaRepository<Genre, Long>  {
+import java.util.Optional;
+
+public interface GenreRepository {
+    Genre saveOrUpdate(Genre genre);
+
+    Optional<Genre> findById(long id);
 
     Genre findByName(String name);
+
 }

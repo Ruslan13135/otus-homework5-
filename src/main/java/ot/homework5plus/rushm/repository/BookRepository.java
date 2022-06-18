@@ -1,18 +1,20 @@
 package ot.homework5plus.rushm.repository;
 
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import ot.homework5plus.rushm.domain.Book;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository {
+    Book saveOrUpdate(Book book);
 
-    @EntityGraph(value = "author_genre_entity_graph")
-    List<Book> findBooksByTitle(String title);
+    Optional<Book> findById(long id);
 
-    @EntityGraph(value = "author_genre_entity_graph")
     List<Book> findAll();
+
+    List<Book> findByName(String name);
+
+    void deleteById(long id);
+
+    long count();
 }

@@ -3,9 +3,9 @@ package ot.homework5plus.rushm.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ot.homework5plus.rushm.repository.CommentRepository;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Comment;
+import ot.homework5plus.rushm.repository.CommentRepository;
 import ot.homework5plus.rushm.service.CommentService;
 import ot.homework5plus.rushm.service.IOService;
 
@@ -25,21 +25,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment save(Comment comment) {
-        return commentRepository.save(comment);
-    }
-
-    @Override
-    public List<Comment> findByBookId(long id) {
-        return commentRepository.findById(id);
+    @Transactional
+    public Comment saveOrUpdate(Comment comment) {
+        return commentRepository.saveOrUpdate(comment);
     }
 
     @Override
     @Transactional
     public void updateTextById(long id, String text) {
-        List<Comment> commentById = commentRepository.findById(id);
-        commentById.forEach(comment -> comment.setText(text));
-        commentRepository.saveAll(commentById);
+        Comment comment = commentRepository.findById(id).get();
+        comment.setText(text);
+        commentRepository.saveOrUpdate(comment);
+    }
+
+    @Override
+    public Comment findById(long id) {
+        return commentRepository.findById(id).get();
     }
 
     @Override
@@ -58,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
             ioService.write("Введите комментарий для книги: " + book.getTitle());
             String commentText = ioService.read();
             Comment comment = new Comment(commentText, book);
-            commentRepository.save(comment);
+            commentRepository.saveOrUpdate(comment);
         } else {
             ioService.write("Книги по такому уникальному идентификатору не существует");
         }

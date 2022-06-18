@@ -7,14 +7,12 @@ import org.springframework.shell.standard.ShellOption;
 
 import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
-import ot.homework5plus.rushm.domain.Comment;
 import ot.homework5plus.rushm.service.AuthorService;
 import ot.homework5plus.rushm.service.BookService;
 import ot.homework5plus.rushm.service.CommentService;
 import ot.homework5plus.rushm.service.IOService;
 
 import java.util.List;
-import java.util.Map;
 
 @ShellComponent
 public class ShellController {
@@ -61,7 +59,7 @@ public class ShellController {
     public void updateBookNameById(@ShellOption("--id") Long id, @ShellOption("--name") String name) {
         Book book = bookService.findById(id);
         book.setTitle(name);
-        bookService.save(book);
+        bookService.saveOrUpdate(book);
     }
 
     @ShellMethod(value = "find book using name", key = {"bookFindByName", "bfbn"})
@@ -73,13 +71,6 @@ public class ShellController {
     @ShellMethod(value = "add comment to book using id", key = {"commentAdd", "comment-a"})
     public void addCommentToBookById() {
         commentService.addNewComment();
-    }
-
-    @ShellMethod(value = "show all comments to book using id", key = {"commentShowAll", "csha"})
-    public void showAllCommentsToBookById(@ShellOption("--id") Long id) {
-        List<Comment> allComments = commentService.findByBookId(id);
-        ioService.write("Комментарии к книге " + bookService.findById(id).getTitle());
-        allComments.forEach(comment -> ioService.write(comment.toString()));
     }
 
     @ShellMethod(value = "delete comment using id", key = {"commentDeleteById", "cdbid"})
@@ -103,12 +94,5 @@ public class ShellController {
         Book books = bookService.findById(id);
         ioService.write("Автор книги: " + authorService.findById(id).getName());
         ioService.write(books.getAuthor().getName());
-    }
-
-    @ShellMethod(value = "show all comments to all books using author id", key = {"commentListByAuthorId", "clbai"})
-    public void showAllCommentsByAuthorId(@ShellOption("--id") Long id) {
-        List<Comment> comments = commentService.findByBookId(id);
-        ioService.write("Комментарии к книгам автора: " + authorService.findById(id).getName());
-        comments.forEach(comment -> ioService.write("Книга: " + comment.getBook().getTitle() + ". Комментарий: " + comment.getText()));
     }
 }

@@ -1,26 +1,26 @@
-package ot.homework5plus.rushm.dao;
+package ot.homework5plus.rushm.repository;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import ot.homework5plus.rushm.repository.BookRepository;
-import ot.homework5plus.rushm.repository.CommentRepository;
+import org.springframework.context.annotation.Import;
 import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Genre;
+import ot.homework5plus.rushm.repository.impl.BookRepositoryImpl;
+import ot.homework5plus.rushm.repository.impl.CommentRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;
 
 
 @DataJpaTest
+@Import({ BookRepositoryImpl.class, CommentRepositoryImpl.class })
 class BookRepositoryTest {
     private static final long THREE_ID = 3;
     private static final long SECOND_ID = 2;
-    private static final long FIRST_ID = 1;
-    private static final long ZERO_ID = 0;
 
     @Autowired
     private BookRepository bookRepository;
@@ -41,7 +41,7 @@ class BookRepositoryTest {
         Author author = new Author("new Роджер Желязны");
         Genre genre = new Genre("new Роман");
         Book book = new Book("Test", author, genre);
-        book = bookRepository.save(book);
+        book = bookRepository.saveOrUpdate(book);
         Book actualBook = em.find(Book.class, book.getId());
         Assertions.assertThat(actualBook).isNotNull().matches(b -> !b.getTitle().equals(""))
                 .matches(b -> b.getAuthor() != null)
@@ -67,7 +67,7 @@ class BookRepositoryTest {
     @Test
     void findBookByName() {
         Book firstBook = em.find(Book.class, SECOND_ID);
-        List<Book> books = bookRepository.findBooksByTitle("Игра престолов");
+        List<Book> books = bookRepository.findByName("Игра престолов");
         Assertions.assertThat(books).containsOnlyOnce(firstBook);
     }
 
@@ -78,7 +78,7 @@ class BookRepositoryTest {
         em.clear();
         Book book = bookRepository.findById(SECOND_ID).get();
         book.setTitle("Test");
-        bookRepository.save(book);
+        bookRepository.saveOrUpdate(book);
         Book updatedBook = em.find(Book.class, SECOND_ID);
         Assertions.assertThat(updatedBook.getTitle()).isNotEqualTo(oldName).isEqualTo("Test");
     }

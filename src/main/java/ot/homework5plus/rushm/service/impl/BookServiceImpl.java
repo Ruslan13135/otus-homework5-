@@ -29,8 +29,9 @@ public class BookServiceImpl implements BookService {
         this.authorService = authorService;
     }
 
-    public Book save(Book book) {
-        return bookRepository.save(book);
+    @Transactional
+    public Book saveOrUpdate(Book book) {
+        return bookRepository.saveOrUpdate(book);
     }
 
     public Book findById(long id) {
@@ -42,14 +43,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public List<Book> findByName(String name) {
-        return bookRepository.findBooksByTitle(name);
-    }
-
-    @Transactional
-    public void updateNameById(long id, String name) {
-        Book book = bookRepository.findById(id).get();
-        book.setTitle(name);
-        bookRepository.save(book);
+        return bookRepository.findByName(name);
     }
 
     @Transactional
@@ -74,6 +68,6 @@ public class BookServiceImpl implements BookService {
         Genre genre = genreService.findByName(genreName);
         if (genre == null) genre = new Genre(genreName);
         Book book = new Book(title, author, genre);
-        bookRepository.save(book);
+        bookRepository.saveOrUpdate(book);
     }
 }

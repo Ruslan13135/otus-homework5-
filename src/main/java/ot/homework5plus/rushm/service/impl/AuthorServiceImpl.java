@@ -2,8 +2,8 @@ package ot.homework5plus.rushm.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.repository.AuthorRepository;
+import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.service.AuthorService;
 
 import java.util.List;
@@ -17,8 +17,9 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author save(Author author) {
-        return authorRepository.save(author);
+    @Transactional
+    public Author saveOrUpdate(Author author) {
+        return authorRepository.saveOrUpdate(author);
     }
 
     @Override

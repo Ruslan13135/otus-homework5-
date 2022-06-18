@@ -10,5 +10,5 @@ public interface GenreService {
 
     Genre findByName(String name);
 
-    Genre save(Genre genre);
+    Genre saveOrUpdate(Genre genre);
 }

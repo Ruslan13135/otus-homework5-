@@ -1,7 +1,6 @@
 package ot.homework5plus.rushm.service.impl;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ot.homework5plus.rushm.domain.Genre;
 import ot.homework5plus.rushm.repository.GenreRepository;
 import ot.homework5plus.rushm.service.GenreService;
@@ -17,8 +16,8 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre save(Genre genre) {
-        return genreRepository.save(genre);
+    public Genre saveOrUpdate(Genre genre) {
+        return genreRepository.saveOrUpdate(genre);
     }
 
     @Override

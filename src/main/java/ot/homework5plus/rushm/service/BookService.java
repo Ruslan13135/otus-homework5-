@@ -9,7 +9,7 @@ public interface BookService {
 
     Book findById(long id);
 
-    Book save(Book book);
+    Book saveOrUpdate(Book book);
 
     List<Book> findAll();
 
