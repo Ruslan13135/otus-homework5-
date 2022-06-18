@@ -8,7 +8,7 @@ import ot.homework5plus.rushm.domain.Comment;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-class AuthorRepositoryTest {
+class CommentRepositoryTest {
 
     private static final String NEW_COMMENT_TEXT = "Test";
     private static final long FIRST_ID = 1;
