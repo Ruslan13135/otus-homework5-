@@ -3,30 +3,24 @@ package ot.homework5plus.rushm.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name ="author")
-@NamedEntityGraph(name = "book_entity_graph", attributeNodes = { @NamedAttributeNode("books") })
+@Document(collection = "author")
 public class Author {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-    private List<Book> books;
-
-    public Author(String name){
+    public Author(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -43,6 +37,9 @@ public class Author {
 
     @Override
     public String toString() {
-        return id + " " + name + ". Количество книг: " + books.size();
+        return "Author {" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

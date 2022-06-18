@@ -1,32 +1,33 @@
 package ot.homework5plus.rushm.domain;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "book")
-@NamedEntityGraph(name = "author_genre_entity_graph", attributeNodes = { @NamedAttributeNode("author"), @NamedAttributeNode("genre") })
+@Document(collection = "book")
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Column (name = "title")
     private String title;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-    @JoinColumn(name = "author_id")
+    @DBRef
     private Author author;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-    @JoinColumn(name = "genre_id")
+    @DBRef
     private Genre genre;
+
+    @DBRef
+    private List<Comment> comments;
 
     public Book(String title, Author author, Genre genre) {
         this.title = title;
@@ -35,22 +36,21 @@ public class Book {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        Book book = (Book) obj;
-
-        return (this.id.equals(book.id) &&
-                this.title.equals(book.title) &&
-                this.author.equals(book.author) &&
-                this.genre.equals(book.genre)
-        );
+    public String toString() {
+        return "Book {" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author.getName() + '\'' +
+                ", genre='" + genre.getName() + '\'' +
+                ", comments=" + comments +
+                '}';
     }
 
-    @Override
-    public String toString() {
-        return id + ". " +
-                "Название книги: \"" + title + "\". " +
-                "Автор книги: \"" + author.getName() + "\". " +
-                "Жанр книги: \"" + genre.getName() + "\";";
+    public String toStringWithCommentCount() {
+        return "Book {" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", comments=" + ((comments == null) ? "0" : comments.size()) +
+                '}';
     }
 }

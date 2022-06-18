@@ -3,34 +3,21 @@ package ot.homework5plus.rushm.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name ="comment")
+@Document(collection ="comment")
 public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Column(name = "text")
     private String text;
 
-    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_id")
-    private Book book;
-
-    public Comment(String text, Book book) {
+    public Comment(String text) {
         this.text = text;
-        this.book = book;
-    }
-
-    @Override
-    public String toString() {
-        return "[" + id + "]" + " " + text + ".";
     }
 }

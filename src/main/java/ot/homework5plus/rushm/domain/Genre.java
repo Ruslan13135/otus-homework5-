@@ -3,36 +3,21 @@ package ot.homework5plus.rushm.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
-import java.util.Objects;
-
-@Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "genre")
+@AllArgsConstructor
+@Document(collection = "genre")
 public class Genre {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Column(name = "name", unique = true)
     private String name;
 
     public Genre(String name) {
         this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        Genre genre = (Genre) obj;
-        if (this.name != null && genre.name != null)
-            return (this.id.equals(genre.id) &&
-                    this.name.equals(genre.name));
-        else return (this.id.equals(genre.id) &&
-                Objects.equals(this.name, genre.name));
     }
 }

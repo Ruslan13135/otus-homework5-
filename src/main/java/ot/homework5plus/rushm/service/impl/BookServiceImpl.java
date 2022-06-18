@@ -1,96 +1,107 @@
 package ot.homework5plus.rushm.service.impl;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ot.homework5plus.rushm.repository.BookRepository;
+import ot.homework5plus.rushm.domain.Comment;
 import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Genre;
-import ot.homework5plus.rushm.service.AuthorService;
-import ot.homework5plus.rushm.service.BookService;
-import ot.homework5plus.rushm.service.GenreService;
-import ot.homework5plus.rushm.service.IOService;
+import ot.homework5plus.rushm.repository.AuthorRepository;
+import ot.homework5plus.rushm.repository.BookRepository;
+import ot.homework5plus.rushm.repository.CommentRepository;
+import ot.homework5plus.rushm.repository.GenreRepository;
+import ot.homework5plus.rushm.service.*;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
-    final private IOService ioService;
-    final private BookRepository bookRepository;
-    final private GenreService genreService;
-    final private AuthorService authorService;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
+    private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public BookServiceImpl(IOService ioService, BookRepository bookRepository, GenreService genreService, AuthorService authorService) {
-        this.ioService = ioService;
+    public BookServiceImpl(AuthorRepository authorRepository, GenreRepository genreRepository, BookRepository bookRepository, CommentRepository commentRepository) {
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
         this.bookRepository = bookRepository;
-        this.genreService = genreService;
-        this.authorService = authorService;
+        this.commentRepository = commentRepository;
     }
 
-    @Transactional
-    public Book save(Book book) {
-        return bookRepository.save(book);
+    @Override
+    public void addBook(String title, String authorName, String genreName) {
+        Author author = authorRepository.findByName(authorName);
+        Genre genre = genreRepository.findByName(genreName);
+        Book book = new Book(title, author, genre);
+        bookRepository.save(book);
     }
 
-    public Book findById(long id) {
-        return bookRepository.findById(id).get();
-    }
-
+    @Override
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
-    public List<Book> findByName(String name) {
-        return bookRepository.findBooksByTitle(name);
+    @Override
+    public Book findById(long id) {
+        return bookRepository.findById(id).get();
     }
 
-    @Transactional
+    @Override
+    public void deleteById(long id) {
+        bookRepository.deleteById(id);
+    }
+
+    @Override
+    public long count() {
+        return bookRepository.count();
+    }
+
+    @Override
     public void updateNameById(long id, String name) {
         Book book = bookRepository.findById(id).get();
         book.setTitle(name);
         bookRepository.save(book);
     }
 
-    @Transactional
-    public void deleteById(long id) {
-        bookRepository.deleteById(id);
+    @Override
+    public List<Book> findByName(String name) {
+        return bookRepository.findAllByTitle(name);
     }
 
-    public long count() {
-        return bookRepository.count();
-    }
-
-    public List<Book> findAllBooksByAuthorId(long id) {
-        return bookRepository.findAllBooksByAuthorId(id);
-    }
-
-    public Map<Book, Long> findAllBooksWithCommentsCount() {
-        List<ImmutablePair<Book, Long>> pairList= bookRepository.findAllBooksWithCommentsCount();
-        Map<Book, Long> bookMap = new HashMap<>();
-        for (ImmutablePair pair: pairList) {
-            bookMap.put((Book) pair.left, (long) pair.right);
+    @Override
+    public void addComment(long bookId, String commentText) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (book.isPresent()) {
+            Comment comment = new Comment(commentText);
+            commentRepository.save(comment);
+            book.get().setComments(addCommentToBookCommentList(book.get(), comment));
+            bookRepository.save(book.get());
         }
-        return bookMap;
     }
 
-    @Transactional
-    public void addNewBook() {
-        ioService.write("Пожалуйста, введите название книги");
-        String title = ioService.read();
-        ioService.write("Пожалуйста, введите жанр");
-        String genreName = ioService.read();
-        ioService.write("Пожалуйста, введите автора");
-        String authorName = ioService.read();
-        Author author = authorService.findByName(authorName);
-        if (author == null) author = new Author(authorName);
-        Genre genre = genreService.findByName(genreName);
-        if (genre == null) genre = new Genre(genreName);
-        Book book = new Book(title, author, genre);
-        bookRepository.save(book);
+    @Override
+    public List<Comment> findCommentsByBookId(long id) {
+        Book book = bookRepository.findById(id).get();
+        return book.getComments();
+    }
+
+    @Override
+    public List<Book> findAllBooksByAuthorId(long id) {
+        return bookRepository.findAllByAuthorId(id);
+    }
+
+
+    private List<Comment> addCommentToBookCommentList(Book book, Comment comment) {
+        List<Comment> comments;
+        if (book.getComments() == null) {
+            comments = new ArrayList<>();
+        } else {
+            comments = book.getComments();
+        }
+        comments.add(comment);
+        return comments;
     }
 }
