@@ -1,28 +1,18 @@
 package ot.homework5plus.rushm.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ot.homework5plus.rushm.dao.GenreDao;
 import ot.homework5plus.rushm.domain.Genre;
+import ot.homework5plus.rushm.repository.GenreRepository;
 import ot.homework5plus.rushm.service.GenreService;
 
 @Service
+@RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
-    final private GenreDao genreDao;
-
-    public GenreServiceImpl(GenreDao genreDao) {
-        this.genreDao = genreDao;
-    }
+    private final GenreRepository genreRepository;
 
     @Override
-    public Genre getById(long id) {
-        return genreDao.getById(id);
-    }
-
-    @Override
-    public Genre getGenre(String genreName) {
-        if (!genreDao.checkByName(genreName)) {
-            genreDao.insert(new Genre(genreName));
-        }
-        return genreDao.getByName(genreName);
+    public Genre findByName(String genreName) {
+        return genreRepository.findByName(genreName);
     }
 }
