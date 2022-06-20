@@ -1,14 +1,14 @@
-package ot.homework5plus.rushm.service;
+package ot.homework5plus.rushm.repository;
 
 import ot.homework5plus.rushm.domain.Author;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface AuthorService {
-
+public interface AuthorRepository {
     Author saveOrUpdate(Author author);
 
-    Author findById(long id);
+    Optional<Author> findById(long id);
 
     List<Author> findAll();
 

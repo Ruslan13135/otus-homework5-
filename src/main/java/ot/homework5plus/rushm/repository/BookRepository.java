@@ -1,23 +1,20 @@
-package ot.homework5plus.rushm.service;
+package ot.homework5plus.rushm.repository;
 
 import ot.homework5plus.rushm.domain.Book;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-public interface BookService {
-
-    Book findById(long id);
-
+public interface BookRepository {
     Book saveOrUpdate(Book book);
+
+    Optional<Book> findById(long id);
 
     List<Book> findAll();
 
     List<Book> findByName(String name);
 
-    void addNewBook();
+    void deleteById(long id);
 
     long count();
-
-    void deleteById(long id);
 }

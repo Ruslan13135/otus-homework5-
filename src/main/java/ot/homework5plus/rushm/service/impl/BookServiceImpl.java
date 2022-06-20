@@ -2,7 +2,8 @@ package ot.homework5plus.rushm.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ot.homework5plus.rushm.dao.BookDao;
+import org.springframework.transaction.annotation.Transactional;
+import ot.homework5plus.rushm.repository.BookRepository;
 import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Genre;
@@ -16,53 +17,57 @@ import java.util.List;
 @Service
 public class BookServiceImpl implements BookService {
     final private IOService ioService;
-    final private BookDao bookDao;
+    final private BookRepository bookRepository;
     final private GenreService genreService;
     final private AuthorService authorService;
 
     @Autowired
-    public BookServiceImpl(IOService ioService, BookDao bookDao, GenreService genreService, AuthorService authorService) {
+    public BookServiceImpl(IOService ioService, BookRepository bookRepository, GenreService genreService, AuthorService authorService) {
         this.ioService = ioService;
-        this.bookDao = bookDao;
+        this.bookRepository = bookRepository;
         this.genreService = genreService;
         this.authorService = authorService;
     }
 
-    @Override
-    public List<Book> getAll() {
-        return bookDao.getAll();
+    @Transactional
+    public Book saveOrUpdate(Book book) {
+        return bookRepository.saveOrUpdate(book);
     }
 
-    @Override
-    public int getCount() {
-        return bookDao.getCount();
+    public Book findById(long id) {
+        return bookRepository.findById(id).get();
     }
 
-    @Override
-    public void insert(Book book) {
-        bookDao.insert(book);
+    public List<Book> findAll() {
+        return bookRepository.findAll();
     }
 
-    @Override
-    public Book getById(long id) {
-        return bookDao.getById(id);
+    public List<Book> findByName(String name) {
+        return bookRepository.findByName(name);
     }
 
-    @Override
+    @Transactional
     public void deleteById(long id) {
-        bookDao.deleteById(id);
+        bookRepository.deleteById(id);
     }
 
-    @Override
-    public Book getNewBook() {
+    public long count() {
+        return bookRepository.count();
+    }
+
+    @Transactional
+    public void addNewBook() {
         ioService.write("Пожалуйста, введите название книги");
         String title = ioService.read();
         ioService.write("Пожалуйста, введите жанр");
         String genreName = ioService.read();
         ioService.write("Пожалуйста, введите автора");
         String authorName = ioService.read();
-        Genre genre = genreService.getGenre(genreName);
-        Author author = authorService.getAuthor(authorName);
-        return new Book(title, genre, author);
+        Author author = authorService.findByName(authorName);
+        if (author == null) author = new Author(authorName);
+        Genre genre = genreService.findByName(genreName);
+        if (genre == null) genre = new Genre(genreName);
+        Book book = new Book(title, author, genre);
+        bookRepository.saveOrUpdate(book);
     }
 }
