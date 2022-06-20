@@ -4,7 +4,7 @@ import ot.homework5plus.rushm.domain.Author;
 
 public interface AuthorService {
 
-    Author getById(long id);
+    Author findByName(String authorName);
 
-    Author getAuthor(String genreName);
+    Author findById(long id);
 }

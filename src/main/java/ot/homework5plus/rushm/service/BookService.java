@@ -1,20 +1,29 @@
 package ot.homework5plus.rushm.service;
 
 import ot.homework5plus.rushm.domain.Book;
+import ot.homework5plus.rushm.domain.Comment;
 
 import java.util.List;
 
 public interface BookService {
 
-    List<Book> getAll();
+    Book findById(long id);
 
-    Book getById(long id);
+    List<Book> findAll();
 
-    Book getNewBook();
+    List<Book> findByName(String name);
 
-    int getCount();
+    List<Comment> findCommentsByBookId(long id);
 
-    void insert(Book book);
+    List<Book> findAllBooksByAuthorId(long id);
+
+    void addBook(String title, String authorName, String genreName);
 
     void deleteById(long id);
+
+    long count();
+
+    void updateNameById(long id, String name);
+
+    void addComment(long bookId, String commentText);
 }

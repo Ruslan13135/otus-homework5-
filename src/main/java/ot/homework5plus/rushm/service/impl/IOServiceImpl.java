@@ -21,11 +21,13 @@ public class IOServiceImpl implements IOService {
 
     @Override
     public Integer readInt() {
-        return sc.nextInt();
+        int count = sc.nextInt();
+        sc.nextLine();
+        return count;
     }
 
     @Override
-    public void write(int count) {
+    public void write(long count) {
         System.out.println(count);
     }
 }

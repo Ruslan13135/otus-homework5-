@@ -2,67 +2,106 @@ package ot.homework5plus.rushm.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ot.homework5plus.rushm.dao.BookDao;
+import ot.homework5plus.rushm.domain.Comment;
 import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Genre;
-import ot.homework5plus.rushm.service.AuthorService;
-import ot.homework5plus.rushm.service.BookService;
-import ot.homework5plus.rushm.service.GenreService;
-import ot.homework5plus.rushm.service.IOService;
+import ot.homework5plus.rushm.repository.AuthorRepository;
+import ot.homework5plus.rushm.repository.BookRepository;
+import ot.homework5plus.rushm.repository.CommentRepository;
+import ot.homework5plus.rushm.repository.GenreRepository;
+import ot.homework5plus.rushm.service.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
-    final private IOService ioService;
-    final private BookDao bookDao;
-    final private GenreService genreService;
-    final private AuthorService authorService;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
+    private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public BookServiceImpl(IOService ioService, BookDao bookDao, GenreService genreService, AuthorService authorService) {
-        this.ioService = ioService;
-        this.bookDao = bookDao;
-        this.genreService = genreService;
-        this.authorService = authorService;
+    public BookServiceImpl(AuthorRepository authorRepository, GenreRepository genreRepository, BookRepository bookRepository, CommentRepository commentRepository) {
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
+        this.bookRepository = bookRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
-    public List<Book> getAll() {
-        return bookDao.getAll();
+    public void addBook(String title, String authorName, String genreName) {
+        Author author = authorRepository.findByName(authorName);
+        Genre genre = genreRepository.findByName(genreName);
+        Book book = new Book(title, author, genre);
+        bookRepository.save(book);
     }
 
     @Override
-    public int getCount() {
-        return bookDao.getCount();
+    public List<Book> findAll() {
+        return bookRepository.findAll();
     }
 
     @Override
-    public void insert(Book book) {
-        bookDao.insert(book);
-    }
-
-    @Override
-    public Book getById(long id) {
-        return bookDao.getById(id);
+    public Book findById(long id) {
+        return bookRepository.findById(id).get();
     }
 
     @Override
     public void deleteById(long id) {
-        bookDao.deleteById(id);
+        bookRepository.deleteById(id);
     }
 
     @Override
-    public Book getNewBook() {
-        ioService.write("Пожалуйста, введите название книги");
-        String title = ioService.read();
-        ioService.write("Пожалуйста, введите жанр");
-        String genreName = ioService.read();
-        ioService.write("Пожалуйста, введите автора");
-        String authorName = ioService.read();
-        Genre genre = genreService.getGenre(genreName);
-        Author author = authorService.getAuthor(authorName);
-        return new Book(title, genre, author);
+    public long count() {
+        return bookRepository.count();
+    }
+
+    @Override
+    public void updateNameById(long id, String name) {
+        Book book = bookRepository.findById(id).get();
+        book.setTitle(name);
+        bookRepository.save(book);
+    }
+
+    @Override
+    public List<Book> findByName(String name) {
+        return bookRepository.findAllByTitle(name);
+    }
+
+    @Override
+    public void addComment(long bookId, String commentText) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (book.isPresent()) {
+            Comment comment = new Comment(commentText);
+            commentRepository.save(comment);
+            book.get().setComments(addCommentToBookCommentList(book.get(), comment));
+            bookRepository.save(book.get());
+        }
+    }
+
+    @Override
+    public List<Comment> findCommentsByBookId(long id) {
+        Book book = bookRepository.findById(id).get();
+        return book.getComments();
+    }
+
+    @Override
+    public List<Book> findAllBooksByAuthorId(long id) {
+        return bookRepository.findAllByAuthorId(id);
+    }
+
+
+    private List<Comment> addCommentToBookCommentList(Book book, Comment comment) {
+        List<Comment> comments;
+        if (book.getComments() == null) {
+            comments = new ArrayList<>();
+        } else {
+            comments = book.getComments();
+        }
+        comments.add(comment);
+        return comments;
     }
 }
