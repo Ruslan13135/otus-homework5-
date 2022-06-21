@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Книжки</title>
+    <meta charset="UTF-8">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+<body>
+
+<div class="container mt-3">
+    <h1 class="h1">Добавьте комментарий</h1>
+
+    <table class="table table-striped table-dark">
+        <thead class="thead-dark">
+        <tr>
+            <th>Номер</th>
+            <th>Текст</th>
+            <th>Действие</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="comment, itemStat : ${comments}">
+            <td th:text="${itemStat.index} + 1"></td>
+            <td th:text="${comment.text}"></td>
+            <td>
+                <form method="post" th:action="@{/comment/delete/__${comment.id}__}">
+                    <a role="button" class="btn btn-success btn-sm" th:href="@{/comment/edit/__${comment.id}__}">Редактировать</a>
+                    <button class="btn btn-danger btn-sm">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form th:action="@{/comment/addComment}">
+        <input name="bookId" th:value="__${book.id}__" type="hidden">
+        <button class="btn btn-info">Добавить новый комментарий</button>
+    </form>
+
+    <a href="/">Вернуться к списку книг</a>
+</div>
+
+<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+</body>
+</html>
