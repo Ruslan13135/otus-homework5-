@@ -98,32 +98,6 @@
                 });
             })
 
-            $(document).ready(function () {
-                $("tr.info-book .edit").click(function () {
-                    let book = $(this).closest('tr')
-                    var formData = {
-                        id: book.find('.id').text(),
-                        title: book.find('.title').text(),
-                        author: book.find('.authorName').text(),
-                        genre: book.find('.genreName').text()
-                    }
-                    console.log("here")
-                    console.log(formData)
-                    $.post({
-                        url: '/edit/',
-                        contentType: 'application/json; charset=utf-8',
-                        data: JSON.stringify(formData),
-                        success: function (html) {
-                            console.log(html)
-                            $('#mainPage').html(html)
-                        }, error: function (xhr, error) {
-                            console.log(error + '. HTTP status: ' + xhr.status);
-                        }
-                    })
-                    console.log("passed")
-                });
-            })
-
         })
     })
 </script>
