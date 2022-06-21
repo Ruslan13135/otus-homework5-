@@ -6,7 +6,7 @@
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
 <body>
-<div class="container mt-3">
+<div id = "mainPage" class="container mt-3">
     <h1 class="h1">Книжки</h1>
 
     <table class="table table-striped table-dark">
@@ -20,22 +20,7 @@
             </tr>
         </thead>
 
-        <tbody>
-            <tr th:each="book, itemStat : ${books}">
-                <td th:text="${itemStat.index} + 1"></td>
-                <td>
-                    <a th:href="@{/view/__${book.id}__}" th:text="${book.title}"></a>
-                </td>
-                <td th:text="${book.author.name}"></td>
-                <td th:text="${book.genre.name}"></td>
-
-                <form method="post" th:action="@{/delete/__${book.id}__}">
-                    <td>
-                        <a role="button" class="btn btn-success btn-sm" th:href="@{/edit/{id}(id=${book.id})}">Редактировать</a>
-                        <button class="btn btn-danger btn-sm">Удалить</button>
-                    </td>
-                </form>
-            </tr>
+        <tbody id = "tbody-books">
         </tbody>
     </table>
     <a class="btn btn-info" href="/addBook">Приложить книгу</a>
@@ -44,6 +29,104 @@
 <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
 <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.get('/api/', function (data) {
+            console.log(data)
+            let bookHtml = "";
+            $.each(data, function (i, value) {
+                bookHtml = "<tr class = \"info-book\">" +
+                    "                <td class = \"id\">" + value.id + "</td>" +
+                    "                <td>" +
+                    "                    <a class = \"title\" href=\"/view/" + value.id + "\">" + value.title + "</a>" +
+                    "                </td>" +
+                    "                <td class = \"authorName\">" + value.author.name + "</td>" +
+                    "                <td class = \"genreName\">" + value.genre.name + "</td>" +
+                    "                <form method=\"post\">" +
+                    "                    <td>" +
+                    "                        <button role=\"button\" class=\"edit btn btn-success btn-sm\">Редактировать</button>" +
+                    "                        <button id = \"delete_book\" class=\"delete btn btn-danger btn-sm\">Удалить</button>" +
+                    "                    </td>" +
+                    "                </form>" +
+                    "            </tr>";
+                $('#tbody-books').append(bookHtml);
+            });
+
+            $(document).ready(function () {
+                $("tr.info-book .delete").click(function () {
+                    let book = $(this).closest('tr')
+                    var formData = {
+                        id: book.find('.id').text(),
+                        title: book.find('.title').text()
+                    }
+                    $.post({
+                        url: '/delete/',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(formData),
+                        success: function () {
+                            window.location.reload()
+                        }, error: function () {
+                            window.location.reload()
+                        }
+                    })
+                    console.log("passed")
+                });
+            })
+
+            $(document).ready(function () {
+                $("tr.info-book .edit").click(function () {
+                    let book = $(this).closest('tr')
+                    var formData = {
+                        id: book.find('.id').text(),
+                        title: book.find('.title').text(),
+                        author: book.find('.authorName').text(),
+                        genre: book.find('.genreName').text()
+                    }
+                    console.log(formData)
+
+                    $.post({
+                        url: '/edit/',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(formData),
+                        success: function (html) {
+                            $('#mainPage').html(html)
+                        }, error: function (xhr, error) {
+                            console.log(error + '. HTTP status: ' + xhr.status);
+                        }
+                    })
+                });
+            })
+
+            $(document).ready(function () {
+                $("tr.info-book .edit").click(function () {
+                    let book = $(this).closest('tr')
+                    var formData = {
+                        id: book.find('.id').text(),
+                        title: book.find('.title').text(),
+                        author: book.find('.authorName').text(),
+                        genre: book.find('.genreName').text()
+                    }
+                    console.log("here")
+                    console.log(formData)
+                    $.post({
+                        url: '/edit/',
+                        contentType: 'application/json; charset=utf-8',
+                        data: JSON.stringify(formData),
+                        success: function (html) {
+                            console.log(html)
+                            $('#mainPage').html(html)
+                        }, error: function (xhr, error) {
+                            console.log(error + '. HTTP status: ' + xhr.status);
+                        }
+                    })
+                    console.log("passed")
+                });
+            })
+
+        })
+    })
+</script>
 
 </body>
 </html>
