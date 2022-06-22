@@ -2,6 +2,14 @@ drop table if exists genre;
 drop table if exists author;
 drop table if exists comment;
 drop table if exists book;
+drop table if exists user;
+
+create table user
+(
+    id   bigint primary key auto_increment,
+    username varchar(255) unique,
+    password varchar(255)
+);
 
 create table comment
 (

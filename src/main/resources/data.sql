@@ -10,3 +10,5 @@ insert into author (id, name) values (3, 'Лев Толстой')
 insert into book (id, title, genre_id, author_id) values (1, 'Игра престолов', 1, 1)
 insert into book (id, title, genre_id, author_id) values (2, 'Девять принцев Амбера', 2, 2)
 insert into book (id, title, genre_id, author_id) values (3, 'Война и мир', 3, 3)
+-- администратор
+insert into user (id, username, password) values(1, 'admin', 'password')
