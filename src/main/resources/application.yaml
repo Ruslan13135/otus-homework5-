@@ -1,11 +1,20 @@
 spring:
   main:
     allow-circular-references: true
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/base?serverTimezone=Europe/Moscow&useSSL=false
-    username: root
-    password: admin
-  sql:
-    init:
-      mode: always
+  data:
+    mongodb:
+      database: database_test
+      port: 27017
+      host: localhost
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ot.homework5plus.rushm.changelogs
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework: INFO
+    org.springframework.transaction: INFO
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG

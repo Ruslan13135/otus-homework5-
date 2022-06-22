@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Genre {
+public class Comment {
 
-    private String name;
+    private String text;
 
-    public Genre(String name) {
-        this.name = name;
+    public Comment(String text) {
+        this.text = text;
     }
 }

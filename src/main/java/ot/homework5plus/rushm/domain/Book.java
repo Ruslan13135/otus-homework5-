@@ -1,78 +1,45 @@
 package ot.homework5plus.rushm.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "book")
 public class Book {
-    private Long id;
+
+    @Id
+    private String id;
+
     private String title;
+
     private Author author;
+
     private Genre genre;
 
-    public Book(Long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
+    private List<Comment> comments;
 
-    public Book(String title, Genre genre, Author author) {
+    public Book(String title, Author author, Genre genre, List<Comment> comments) {
         this.title = title;
         this.author = author;
         this.genre = genre;
-    }
-
-    public Book(Long id, String title, Author author, Genre genre) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        Book book = (Book) obj;
-
-        return (this.id.equals(book.id) &&
-                this.title.equals(book.title) &&
-                this.author.equals(book.author) &&
-                this.genre.equals(book.genre)
-        );
+        this.comments = comments;
     }
 
     @Override
     public String toString() {
-        return id + ". " +
-                "Название книги: \"" + title + "\". " +
-                "Автор книги: \"" + author.getName() + "\". " +
-                "Жанр книги: \"" + genre.getName() + "\";";
+        return "Book {" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author.getName() + '\'' +
+                ", genre='" + genre.getName() + '\'' +
+                ", comments=" + comments +
+                '}';
     }
 }
