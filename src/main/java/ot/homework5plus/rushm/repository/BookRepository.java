@@ -1,13 +1,8 @@
 package ot.homework5plus.rushm.repository;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import ot.homework5plus.rushm.domain.Book;
 
-import java.util.List;
+public interface BookRepository extends ReactiveMongoRepository<Book, String> {
 
-public interface BookRepository extends MongoRepository<Book, Long> {
-
-    List<Book> findAllByTitle(String title);
-
-    List<Book> findAllByAuthorId(long id);
 }

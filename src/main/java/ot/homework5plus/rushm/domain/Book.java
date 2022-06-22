@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -16,23 +15,21 @@ import java.util.List;
 public class Book {
 
     @Id
-    private long id;
+    private String id;
 
     private String title;
 
-    @DBRef
     private Author author;
 
-    @DBRef
     private Genre genre;
 
-    @DBRef
     private List<Comment> comments;
 
-    public Book(String title, Author author, Genre genre) {
+    public Book(String title, Author author, Genre genre, List<Comment> comments) {
         this.title = title;
         this.author = author;
         this.genre = genre;
+        this.comments = comments;
     }
 
     @Override
@@ -43,14 +40,6 @@ public class Book {
                 ", author='" + author.getName() + '\'' +
                 ", genre='" + genre.getName() + '\'' +
                 ", comments=" + comments +
-                '}';
-    }
-
-    public String toStringWithCommentCount() {
-        return "Book {" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", comments=" + ((comments == null) ? "0" : comments.size()) +
                 '}';
     }
 }

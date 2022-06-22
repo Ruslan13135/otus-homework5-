@@ -1,65 +1,66 @@
 package ot.homework5plus.rushm.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ot.homework5plus.rushm.domain.Author;
-import ot.homework5plus.rushm.domain.Comment;
 import ot.homework5plus.rushm.domain.Genre;
 import ot.homework5plus.rushm.domain.Book;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
 class BookRepositoryTest {
-    private static final int FIFTH_ID = 5;
-    private static final long FOURTH_ID = 4;
 
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
     @Test
+    @DirtiesContext
     void addBook() {
-        Genre genre = new Genre(FIFTH_ID, "new Роман");
-        genreRepository.save(genre);
-        Author author = new Author(FIFTH_ID, "new Роджер Желязны");
-        authorRepository.save(author);
-        List<Comment> comment = new ArrayList<>();
-        comment.add(new Comment(FIFTH_ID, "new Comment"));
-        Book book = new Book(FIFTH_ID, "Test", author, genre, comment);
-        book = bookRepository.save(book);
-        Book actualBook = bookRepository.findById(book.getId()).get();
-        Assertions.assertThat(actualBook).isNotNull().matches(b -> !b.getTitle().equals(""))
-                .matches(b -> b.getAuthor() != null)
-                .matches(b -> b.getGenre() != null);
+        Mono<Book> bookMono = bookRepository.save(new Book("Test Book", new Author("Test Author"), new Genre("Test Genre"), null));
+        StepVerifier
+                .create(bookMono)
+                .assertNext(book -> assertNotNull(book.getId()))
+                .expectComplete()
+                .verify();
     }
 
     @Test
-    void findAll() {
-        List<Book> books = bookRepository.findAll();
-        Assertions.assertThat(books.size()).isEqualTo(FOURTH_ID);
+    void shouldReturnAllCorrectBooks() {
+        Flux<Book> bookFlux = bookRepository.findAll();
+        StepVerifier
+                .create(bookFlux)
+                .recordWith(ArrayList::new)
+                .expectNextCount(5)
+                .consumeRecordedWith(results -> {
+                    assertThat(results)
+                            .extracting(Book::getTitle)
+                            .contains("book1", "book2", "book3", "book4", "book5");
+                })
+                .verifyComplete();
     }
 
     @Test
-    void deleteByBookId() {
-        Book firstBook = bookRepository.findById((long) FIFTH_ID).get();
-        Assertions.assertThat(firstBook).isNotNull();
-        bookRepository.deleteById((long) FIFTH_ID);
-        boolean secondBook = bookRepository.findById((long) FIFTH_ID).isEmpty();
-        Assertions.assertThat(secondBook).isTrue();
+    void shouldFindAllBooks() {
+        StepVerifier.create(bookRepository.findAll())
+                .expectNextCount(5)
+                .verifyComplete();
     }
 
     @Test
-    void returnCorrectBookCount() {
-        long count = bookRepository.count();
-        Assertions.assertThat(count).isEqualTo(4);
+    void shouldFindCorrectBookById() {
+        Mono<Book> monoBook = bookRepository.findById("1");
+        StepVerifier.create(monoBook)
+                .assertNext((book -> assertThat(book.getTitle()).isEqualTo("book1")))
+                .expectComplete()
+                .verify();
     }
 }
