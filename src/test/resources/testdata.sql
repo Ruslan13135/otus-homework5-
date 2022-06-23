@@ -12,3 +12,9 @@ insert into book (id, title, genre_id, author_id) values (3, 'Девять пр�
 insert into book (id, title, genre_id, author_id) values (4, 'Война и мир', 4, 4)
 -- администратор
 insert into user (id, username, password) values(1, 'admin', 'password')
+insert into user (id, username, password) values(2, 'user', 'user')
+insert into user (id, username, password) values(3, 'user2', 'user')
+-- роли
+insert into user_role (user_id, roles) values (1, 'ADMIN')
+insert into user_role (user_id, roles) values (2, 'USER')
+insert into user_role (user_id, roles) values (3, 'BANNED_USER')

@@ -1,6 +1,5 @@
 package ot.homework5plus.rushm.repository;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,11 @@ import ot.homework5plus.rushm.service.GenreService;
 
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ComponentScan("ot.homework5plus.rushm.service")
+@WebMvcTest(controllers = BookController.class)
 @MockBeans({
         @MockBean(BookService.class),
         @MockBean(AuthorService.class),
@@ -30,25 +29,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @MockBean(CommentService.class),
         @MockBean(UserRepository.class)
 })
-@WebMvcTest(controllers = BookController.class)
-class BookRepositoryTest {
+class SecurityTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
-    @Test
-    void shouldReturnStartPage() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("books"))
-                .andExpect(view().name("books"));
+
+    @WithMockUser(username = "user2", authorities = {"BANNED_USER"})
+    @ParameterizedTest
+    @ValueSource(strings = {"/comment", "/comment/delete/1", "/comment/addComment", "/comment/edit/1"})
+    void shouldForbiddenAllCommentPages(String value) throws Exception {
+        mockMvc.perform(post(value)).andExpect(status().isForbidden());
     }
 
-    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
-    @Test
-    void shouldAddNewBookGet() throws Exception {
-        this.mockMvc.perform(get("/addBook")).andExpect(status().isOk());
+    @ParameterizedTest
+    @ValueSource(strings = {"/comment", "/comment/delete/1", "/comment/addComment", "/comment/edit/1"})
+    void commentParameterizedNotAuthenticated(String value) throws Exception {
+        mockMvc.perform(post(value)).andExpect(unauthenticated());
+    }
+
+    @WithMockUser(username = "admin")
+    @ParameterizedTest
+    @ValueSource(strings = {"/comment", "/comment/delete/1", "/comment/addComment", "/comment/edit/1"})
+    void commentParameterizedAuthenticated(String value) throws Exception {
+        mockMvc.perform(post(value)).andExpect(authenticated());
+    }
+
+    @WithMockUser(username = "user2", authorities = {"BANNED_USER"})
+    @ParameterizedTest
+    @ValueSource(strings = {"/", "/addBook", "/delete/1", "/edit/1", "/view/1"})
+    void shouldForbiddenAllPages(String value) throws Exception {
+        mockMvc.perform(post(value)).andExpect(status().isForbidden());
     }
 
     @ParameterizedTest
@@ -63,4 +74,5 @@ class BookRepositoryTest {
     void parameterizedAuthenticated(String value) throws Exception {
         mockMvc.perform(post(value)).andExpect(authenticated());
     }
+
 }
