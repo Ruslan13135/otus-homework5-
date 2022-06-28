@@ -3,9 +3,23 @@ spring:
     allow-circular-references: true
   data:
     mongodb:
-      database: new-test
-      port: 27017
+      database: test5
       host: localhost
+      port: 27017
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/base?serverTimezone=Europe/Moscow&useSSL=false
+    username: root
+    password: admin
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      mode: always
 
 mongock:
   runner-type: "InitializingBean"

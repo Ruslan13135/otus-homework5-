@@ -1,15 +1,10 @@
 package ot.homework5plus.rushm.changelogs;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
-import ot.homework5plus.rushm.domain.Author;
-import ot.homework5plus.rushm.domain.Book;
-import ot.homework5plus.rushm.domain.Comment;
-import ot.homework5plus.rushm.domain.Genre;
-import ot.homework5plus.rushm.repository.AuthorRepository;
-import ot.homework5plus.rushm.repository.BookRepository;
-import ot.homework5plus.rushm.repository.CommentRepository;
-import ot.homework5plus.rushm.repository.GenreRepository;
+import com.mongodb.client.MongoDatabase;
+import io.changock.migration.api.annotations.ChangeLog;
+import io.changock.migration.api.annotations.ChangeSet;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import ot.homework5plus.rushm.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +12,14 @@ import java.util.List;
 @ChangeLog
 public class DatabaseChangeLog {
 
+    @ChangeSet(order = "000", id = "dropDatabase", author = "Ruslan")
+    public void dropDatabase(MongoDatabase database) {
+        database.drop();
+    }
+
     @ChangeSet(order = "001", id = "addMoreBooks", author = "Ruslan")
-    public void insertBooks(AuthorRepository authorRepository, BookRepository bookRepository, CommentRepository commentRepository, GenreRepository genreRepository) {
-        Genre genre1 = new Genre(1, "genre11");
+    public void insertBooks(MongockTemplate repository) {
+        Genre genre1 = new Genre(1, "genre1");
         Genre genre2 = new Genre(2, "genre2");
         Author author1 = new Author(1, "author1");
         Author author2 = new Author(2, "author2");
@@ -41,19 +41,38 @@ public class DatabaseChangeLog {
         Book book4 = new Book(4, "book4", author2, genre2, null);
         Book book5 = new Book(5, "book5", author3, genre2, null);
 
-        genreRepository.save(genre1);
-        genreRepository.save(genre2);
-        authorRepository.save(author1);
-        authorRepository.save(author2);
-        authorRepository.save(author3);
-        commentRepository.save(comment1);
-        commentRepository.save(comment2);
-        commentRepository.save(comment3);
-        commentRepository.save(comment4);
-        bookRepository.save(book1);
-        bookRepository.save(book2);
-        bookRepository.save(book3);
-        bookRepository.save(book4);
-        bookRepository.save(book5);
+        List<Book> author1books = new ArrayList<>();
+        author1books.add(book1);
+        author1books.add(book2);
+        List<Book> author2books = new ArrayList<>();
+        author2books.add(book3);
+        author2books.add(book4);
+        List<Book> author3books = new ArrayList<>();
+        author3books.add(book5);
+
+        repository.save(genre1);
+        repository.save(genre2);
+        repository.save(author1);
+        repository.save(author2);
+        repository.save(author3);
+        repository.save(comment1);
+        repository.save(comment2);
+        repository.save(comment3);
+        repository.save(comment4);
+        repository.save(book1);
+        repository.save(book2);
+        repository.save(book3);
+        repository.save(book4);
+        repository.save(book5);
+
+        DatabaseSequence authorsSequence = new DatabaseSequence("authors_sequence", 3);
+        DatabaseSequence genresSequence = new DatabaseSequence("genres_sequence", 2);
+        DatabaseSequence booksSequence = new DatabaseSequence("books_sequence", 5);
+        DatabaseSequence commentSequence = new DatabaseSequence("comments_sequence", 4);
+
+        repository.save(authorsSequence);
+        repository.save(genresSequence);
+        repository.save(booksSequence);
+        repository.save(commentSequence);
     }
 }
