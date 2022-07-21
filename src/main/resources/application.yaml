@@ -6,6 +6,34 @@ spring:
     url: jdbc:mysql://localhost:3306/base?serverTimezone=Europe/Moscow&useSSL=false
     username: root
     password: admin
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  data:
+    rest:
+      base-path: /datarest
   sql:
     init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
       mode: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, logfile
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+    diskspace:
+      enabled: true
+
+logging:
+  file:
+    name: logfile.txt
