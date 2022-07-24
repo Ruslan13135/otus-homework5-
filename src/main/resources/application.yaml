@@ -3,9 +3,9 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/base?serverTimezone=Europe/Moscow&useSSL=false
-    username: root
-    password: admin
+    url: ${DB_URL}
+    username: ${MY_SQL_ROOT_USER}
+    password: ${MY_SQL_ROOT_PASSWORD}
   jpa:
     generate-ddl: false
     hibernate:
