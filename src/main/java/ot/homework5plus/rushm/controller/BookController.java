@@ -34,13 +34,13 @@ public class BookController {
 
     @PostMapping("/addBook")
     public String addBook(@ModelAttribute Book book) {
-        bookService.addOrSaveBook(book);
+        bookService.addBook(book);
         return "redirect:/";
     }
 
     @PostMapping("/delete/{book}")
     public String deleteBook(@PathVariable Book book) {
-        bookService.delete(book);
+        bookService.deleteById(book.getId());
         return "redirect:/";
     }
 

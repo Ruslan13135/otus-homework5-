@@ -37,3 +37,21 @@ management:
 logging:
   file:
     name: logfile.txt
+
+hystrix:
+  command:
+    findAllBooks:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+    findBookById:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+    findAllCommentByBook:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
