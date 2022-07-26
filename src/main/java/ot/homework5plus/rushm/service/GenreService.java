@@ -4,7 +4,5 @@ import ot.homework5plus.rushm.domain.Genre;
 
 public interface GenreService {
 
-    Genre getById(long id);
-
-    Genre getGenre(String genreName);
+    Genre findByName(String genreName);
 }
