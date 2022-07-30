@@ -1,7 +1,6 @@
 package ot.homework5plus.rushm.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,28 +26,24 @@ public class BookController {
         return "books";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/addBook")
     public String addBook(Model model) {
         model.addAttribute("book", new Book(new Author(), new Genre()));
         return "bookEdit";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/addBook")
     public String addBook(@ModelAttribute Book book) {
         bookService.addOrSaveBook(book);
         return "redirect:/";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/delete/{book}")
     public String deleteBook(@PathVariable Book book) {
         bookService.delete(book);
         return "redirect:/";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/edit/{book}")
     public String editBook(@PathVariable Book book, Model model) {
         model.addAttribute("book", book);
