@@ -47,6 +47,8 @@ public class BookController {
     @GetMapping("/edit/{book}")
     public String editBook(@PathVariable Book book, Model model) {
         model.addAttribute("book", book);
+        List<Book> allBooks = bookService.findAll();
+        model.addAttribute("allBooks", allBooks);
         return "bookEdit";
     }
 
