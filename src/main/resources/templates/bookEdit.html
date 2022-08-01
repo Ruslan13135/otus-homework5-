@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Новая книга</title>
     <meta charset="UTF-8">
@@ -21,11 +21,13 @@
         </div>
 
         <label>
-            <select class="form-control">
-                <option value="0">Название автора</option>
+            <input type="text" name="city" list="cityname">
+            <label for="title">Название автора</label>
+            <datalist id="cityname">
                 <option th:each="option : ${allBooks}" th:value="${option}" th:text="${option}"></option>
-            </select>
+            </datalist>
         </label>
+
 
         <div class="form-group">
             <label for="genreName">Название жанра</label>
