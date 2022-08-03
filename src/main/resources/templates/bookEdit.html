@@ -24,7 +24,7 @@
             <input type="text" list="nameAuthor">
             <label for="title">Название автора</label>
             <datalist id="nameAuthor">
-                <option th:each="option : ${allBooks}" th:value="${option}" th:text="${option}"></option>
+                <option th:each="option : ${allAuthors}" th:value="${option}" th:text="${option}"></option>
             </datalist>
         </label>
 

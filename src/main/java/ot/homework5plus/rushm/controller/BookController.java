@@ -8,6 +8,7 @@ import ot.homework5plus.rushm.domain.Author;
 import ot.homework5plus.rushm.domain.Book;
 import ot.homework5plus.rushm.domain.Comment;
 import ot.homework5plus.rushm.domain.Genre;
+import ot.homework5plus.rushm.service.AuthorService;
 import ot.homework5plus.rushm.service.BookService;
 import ot.homework5plus.rushm.service.CommentService;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
+    private final AuthorService authorService;
     private final CommentService commentService;
 
     @GetMapping("/")
@@ -47,8 +49,8 @@ public class BookController {
     @GetMapping("/edit/{book}")
     public String editBook(@PathVariable Book book, Model model) {
         model.addAttribute("book", book);
-        List<Book> allBooks = bookService.findAll();
-        model.addAttribute("allBooks", allBooks);
+        List<Author> allAuthors = authorService.findAll();
+        model.addAttribute("allAuthors", allAuthors);
         return "bookEdit";
     }
 
