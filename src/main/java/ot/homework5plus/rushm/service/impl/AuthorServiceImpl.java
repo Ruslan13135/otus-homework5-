@@ -1,26 +1,25 @@
 package ot.homework5plus.rushm.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ot.homework5plus.rushm.dao.AuthorDao;
 import ot.homework5plus.rushm.domain.Author;
+import ot.homework5plus.rushm.repository.AuthorRepository;
 import ot.homework5plus.rushm.service.AuthorService;
 
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
-    final private AuthorDao authorDao;
+    private final AuthorRepository authorRepository;
 
-    public AuthorServiceImpl(AuthorDao authorDao) {
-        this.authorDao = authorDao;
+    @Override
+    public Author findByName(String authorName) {
+        return authorRepository.findByName(authorName).orElse(null);
     }
 
     @Override
-    public Author getById(long id) {
-        return authorDao.getById(id);
-    }
-
-    @Override
-    public Author getAuthor(String authorName) {
-        if (!authorDao.checkByName(authorName)) authorDao.insert(new Author(authorName));
-        return authorDao.getByName(authorName);
+    public List<Author> findAll() {
+        return authorRepository.findAll();
     }
 }
