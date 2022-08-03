@@ -50,7 +50,7 @@ public class BookController {
     public String editBook(@PathVariable Book book, Model model) {
         model.addAttribute("book", book);
         List<Author> allAuthors = authorService.findAll();
-        model.addAttribute("allAuthors", allAuthors);
+        model.addAttribute("allAuthors", allAuthors.stream().map(Author::getName));
         return "bookEdit";
     }
 
