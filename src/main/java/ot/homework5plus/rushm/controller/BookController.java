@@ -13,6 +13,7 @@ import ot.homework5plus.rushm.service.BookService;
 import ot.homework5plus.rushm.service.CommentService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class BookController {
     public String editBook(@PathVariable Book book, Model model) {
         model.addAttribute("book", book);
         List<Author> allAuthors = authorService.findAll();
-        model.addAttribute("allAuthors", allAuthors.stream().map(Author::getName));
+        model.addAttribute("allAuthors", allAuthors.stream().map(Author::getName).collect(Collectors.toList()));
         return "bookEdit";
     }
 
