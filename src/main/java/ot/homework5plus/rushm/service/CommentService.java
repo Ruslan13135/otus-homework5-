@@ -1,15 +1,22 @@
 package ot.homework5plus.rushm.service;
 
-import ot.homework5plus.rushm.domain.Book;
-import ot.homework5plus.rushm.domain.Comment;
+import ot.homework5plus.rushm.models.entity.Comment;
 
 import java.util.List;
 
 public interface CommentService {
 
-    List<Comment> findAllComments(Book book);
+    List<Comment> getCommentsByBookId(Long bookId);
 
-    void deleteComment(Comment comment);
+    List<Comment> getFavoriteCommentsByBookId(Long bookId);
 
-    void addOrSaveComment(Comment comment);
+    Comment getComment(Long commentId);
+
+    Comment addComment(Comment comment);
+
+    Comment updateComment(Comment comment);
+
+    void deleteComment(Long commentId);
+
+    long getCount();
 }
