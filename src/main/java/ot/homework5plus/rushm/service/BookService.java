@@ -1,6 +1,6 @@
 package ot.homework5plus.rushm.service;
 
-import ot.homework5plus.rushm.domain.Book;
+import ot.homework5plus.rushm.models.entity.Book;
 
 import java.util.List;
 
@@ -8,13 +8,17 @@ public interface BookService {
 
     List<Book> getAll();
 
-    Book getById(long id);
+    Book getBook(Long bookId);
 
-    Book getNewBook();
+    List<Book> getBooksLikeName(String substring);
 
-    int getCount();
+    Book getBookByCommentId(String commentId);
 
-    void insert(Book book);
+    Book addBook(Book book);
 
-    void deleteById(long id);
+    Book updateBook(Book book);
+
+    void deleteBook(Long bookId);
+
+    long getCount();
 }

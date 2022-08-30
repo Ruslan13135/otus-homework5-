@@ -1,68 +1,89 @@
 package ot.homework5plus.rushm.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ot.homework5plus.rushm.dao.BookDao;
-import ot.homework5plus.rushm.domain.Author;
-import ot.homework5plus.rushm.domain.Book;
-import ot.homework5plus.rushm.domain.Genre;
-import ot.homework5plus.rushm.service.AuthorService;
+import org.springframework.transaction.annotation.Transactional;
+import ot.homework5plus.rushm.models.entity.Book;
+import ot.homework5plus.rushm.models.entity.Comment;
+import ot.homework5plus.rushm.repositories.BookRepository;
+import ot.homework5plus.rushm.repositories.CommentRepository;
 import ot.homework5plus.rushm.service.BookService;
-import ot.homework5plus.rushm.service.GenreService;
-import ot.homework5plus.rushm.service.IOService;
+import ot.homework5plus.rushm.service.CommentService;
 
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class BookServiceImpl implements BookService {
-    final private IOService ioService;
-    final private BookDao bookDao;
-    final private GenreService genreService;
-    final private AuthorService authorService;
 
-    @Autowired
-    public BookServiceImpl(IOService ioService, BookDao bookDao, GenreService genreService, AuthorService authorService) {
-        this.ioService = ioService;
-        this.bookDao = bookDao;
-        this.genreService = genreService;
-        this.authorService = authorService;
+    private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
+    private final CommentService commentService;
+
+    public BookServiceImpl(
+        BookRepository bookRepository,
+        CommentRepository commentRepository,
+        CommentService commentService
+    ) {
+        this.bookRepository = bookRepository;
+        this.commentRepository = commentRepository;
+        this.commentService = commentService;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Book> getAll() {
-        return bookDao.getAll();
+        log.debug("The application got in method - getAll()");
+        return bookRepository.findAll();
     }
 
     @Override
-    public int getCount() {
-        return bookDao.getCount();
+    @Transactional(readOnly = true)
+    public Book getBook(Long bookId) {
+        log.debug("The application got in method - getBook()");
+        return bookRepository.findById(bookId).orElse(null);
     }
 
     @Override
-    public void insert(Book book) {
-        bookDao.insert(book);
+    @Transactional(readOnly = true)
+    public List<Book> getBooksLikeName(String substring) {
+        return bookRepository.findBookByNameContainingIgnoreCase(substring);
     }
 
     @Override
-    public Book getById(long id) {
-        return bookDao.getById(id);
+    @Transactional(readOnly = true)
+    public Book getBookByCommentId(String commentId) {
+        log.debug("The application got in method - getBookByCommentId()");
+        Optional<Comment> comment = commentRepository.findById(Long.parseLong(commentId));
+        return comment.map(Comment::getBook).orElse(null);
     }
 
     @Override
-    public void deleteById(long id) {
-        bookDao.deleteById(id);
+    @Transactional
+    public Book addBook(Book book) {
+        log.debug("The application got in method - addBook()");
+        return bookRepository.save(book);
     }
 
     @Override
-    public Book getNewBook() {
-        ioService.write("Пожалуйста, введите название книги");
-        String title = ioService.read();
-        ioService.write("Пожалуйста, введите жанр");
-        String genreName = ioService.read();
-        ioService.write("Пожалуйста, введите автора");
-        String authorName = ioService.read();
-        Genre genre = genreService.getGenre(genreName);
-        Author author = authorService.getAuthor(authorName);
-        return new Book(title, genre, author);
+    @Transactional
+    public Book updateBook(Book book) {
+        log.debug("The application got in method - updateBook()");
+        return bookRepository.save(book);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBook(Long bookId) {
+        log.debug("The application got in method - deleteBook()");
+        bookRepository.deleteById(bookId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long getCount() {
+        log.debug("The application got in method - getCount()");
+        return bookRepository.count();
     }
 }
